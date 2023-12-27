@@ -1,17 +1,32 @@
 {% extends 'base.html' %}
-{% block titulo %} {{titulo}} {% endblock %}
-{%block contenido%}
-    {% for juego in juegos %}
-        <h4>Titulo: {{juego.nombre}}</h4>
-        <p>Marca: {{juego.marca}}</p>
-        <p>Descripcion: {{juego.descripcion}}</p>
-        <p>Precio: {{juego.precio}}€</p>
-        <p>Referencia: {{juego.referencia}}</p>
-        {% if juego.stock > 0 %}
-            <p>Stock: Disponible</p>
-        {% else %}
-            <p>Stock: No disponible</p>
-        {% endif %}
-    {% endfor %}
+{% block titulo %} {{ titulo }} {% endblock %}
+{% block contenido %}
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  </head>
 
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+          {% for juego in juegos %}
+            <div class="card mb-3">
+              <div class="card-body">
+                <h4 class="card-title">Título: {{ juego.nombre }}</h4>
+                <p class="card-text">Marca: {{ juego.marca }}</p>
+                <p class="card-text">Descripción: {{ juego.descripcion }}</p>
+                <p class="card-text">Precio: {{ juego.precio }}€</p>
+                <p class="card-text">Referencia: {{ juego.referencia }}</p>
+                {% if juego.stock > 0 %}
+                  <p class="card-text text-success">Stock: Disponible</p>
+                {% else %}
+                  <p class="card-text text-danger">Stock: No disponible</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
 {% endblock %}
