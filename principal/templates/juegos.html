@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block titulo %} {{titulo}} {% endblock %}
+{%block contenido%}
+    {% for juego in juegos %}
+        <h4>Titulo: {{juego.nombre}}</h4>
+        <p>Marca: {{juego.marca}}</p>
+        <p>Descripcion: {{juego.descripcion}}</p>
+        <p>Precio: {{juego.precio}}€</p>
+        <p>Referencia: {{juego.referencia}}</p>
+        {% if juego.stock > 0 %}
+            <p>Stock: Disponible</p>
+        {% else %}
+            <p>Stock: No disponible</p>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}
