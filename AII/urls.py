@@ -28,4 +28,5 @@ urlpatterns = [
     path('buscar-palabra/', views.buscar_nombre_descripcion),
     path('lista-puntuaciones/', views.lista_puntuaciones),
     path('juegos-similares/', views.juegos_similares),
+    path('recomendar-juego-usuario/', views.recomendar_juego_usuario),
 ]

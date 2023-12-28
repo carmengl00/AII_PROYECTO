@@ -36,7 +36,6 @@ def populateDB():
 
                 referencia = ficha.find("div", class_="ref").text.replace("Ref. ", "").strip()
 
-                # Descripción
                 descripcion = ficha.find("div", class_="producto-ficha")
                 parrafos = descripcion.find_all("p")
 

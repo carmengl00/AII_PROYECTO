@@ -1,14 +1,14 @@
 import shelve
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
-from principal.forms import BusquedaJuego, BusquedaPorPalabra, BusquedaPorPrecio
+from principal.forms import BusquedaJuego, BusquedaJuegoPorUsuario, BusquedaPorPalabra, BusquedaPorPrecio
 from principal.models import Juego, Puntuacion
 
 from principal.populate import crear_schema, populateDB, populate_puntuaciones
 from whoosh.index import open_dir
 from whoosh.qparser import QueryParser, MultifieldParser, OrGroup
 
-from principal.recommendations import topMatches, transformPrefs
+from principal.recommendations import getRecommendations, topMatches, transformPrefs
 
 
 def inicio(request):
@@ -142,3 +142,29 @@ def juegos_similares(request):
             return render(request, 'juegos_similares.html', {'idJuego': idJuego, 'nombre_juego':nombre_juego, 'items': items, 'listaJuegos': listaJuegos,  'STATIC_URL': settings.STATIC_URL})
     
     return render(request, 'juegos_similares.html', {'form': form})
+
+def recomendar_juego_usuario(request):
+    form = BusquedaJuegoPorUsuario()
+    if request.method == 'POST':
+        form = BusquedaJuegoPorUsuario(request.POST)
+        if form.is_valid():
+            usuario = form.cleaned_data['usuario']
+            shelf = shelve.open("dataRS.dat")
+            Prefs = shelf['prefs']
+            shelf.close()
+            rankings = getRecommendations(Prefs, usuario)
+            recomendados = rankings[:10]
+            juegos_2 = []
+            juegos = []
+            puntuaciones = []
+
+            for re in recomendados:
+                juego = Puntuacion.objects.filter(juego_id=re[1])[0]
+                juego = juego.juego_nombre
+                juegos_2.append(juego)
+                juegos.append(re[1])
+                puntuaciones.append("{:.10f}".format(re[0]))
+
+            items = zip(juegos_2, puntuaciones, juegos)
+            return render(request, 'recomendar_juego_usuario.html', {'usuario': usuario, 'items': items, 'STATIC_URL': settings.STATIC_URL})
+    return render(request, 'recomendar_juego_usuario.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})

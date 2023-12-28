@@ -16,7 +16,7 @@
     <div class="uk-navbar-left">
 
         <ul class="uk-navbar-nav">
-            <li class="uk-active"><a href="#">Inicio</a>
+            <li class="uk-active"><a href="/">Inicio</a>
             <div class="uk-navbar-dropdown">
                     <ul class="uk-nav uk-navbar-dropdown-nav">
                         <li><a href="/cargar">Poblar Base de Datos</a></li>
@@ -30,8 +30,9 @@
 						<li><a href="/juegos">Lista de juegos</a></li>
                         <li><a href="/lista-puntuaciones">Lista de puntuaciones</a></li>
                         <li><a href="/buscar-precio">Buscar juegos por menos de un precio máximo</a></li>
-                        <li><a href="buscar-palabra/">Buscar juegos por palabra</a></li>
-                        <li><a href="/juegos-similares">Buscar juegos similares</a></li>
+                        <li><a href="/buscar-palabra">Buscar juegos por palabra</a></li>
+                        <li><a href="/juegos-similares">Recomendar juegos similares</a></li>
+                        <li><a href="/recomendar-juego-usuario">Recomendar juegos a un usuario</a></li>
                     </ul>
                 </div>
             </li>
@@ -45,6 +46,9 @@
  		
  		<h1 >{% block titulo %} {% endblock %}</h1>
 
-		{% block contenido %} {% endblock %}
+		{% block contenido %}
+        <h3>Carmen Galván López</h3>
+        {% endblock %}
+
   </body>
 </html>
