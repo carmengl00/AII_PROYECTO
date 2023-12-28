@@ -1,14 +1,14 @@
 import shelve
 from django.conf import settings
-from django.shortcuts import render
-from principal.forms import BusquedaPorPrecio
+from django.shortcuts import get_object_or_404, render
+from principal.forms import BusquedaJuego, BusquedaPorPrecio
 from principal.models import Juego, Puntuacion
 
 from principal.populate import crear_schema, populateDB, populate_puntuaciones
 from whoosh.index import open_dir
 from whoosh.qparser import QueryParser
 
-from principal.recommendations import transformPrefs
+from principal.recommendations import topMatches, transformPrefs
 
 
 def inicio(request):
@@ -87,3 +87,39 @@ def loadRS(request):
     loadDict()
     mensaje = 'Se ha cargado el RS'
     return render(request, 'cargar.html', {'titulo': 'FIN DE CARGA DEL RS', 'mensaje': mensaje, 'STATIC_URL': settings.STATIC_URL})
+
+
+def juegos_similares(request):
+    form = BusquedaJuego()
+    items = None
+    juego = None
+
+    if request.method == 'POST':
+        form = BusquedaJuego(request.POST)
+        if form.is_valid():
+            idJuego = form.cleaned_data['idJuego']
+            jue = get_object_or_404(Juego, pk=int(idJuego))
+            nombre_juego = jue.nombre
+            shelf = shelve.open("dataRS.dat")
+            Prefs = shelf['ItemsPrefs']
+            shelf.close()
+
+            similares = topMatches(Prefs, int(idJuego), n=3)
+            juegos = []
+            similaridad = []
+
+            idJuegos = []
+            listaJuegos = set()
+
+            for re in similares:
+                juego = Puntuacion.objects.filter(juego_id=re[1])[0]
+                juego = juego.juego_nombre
+
+                listaJuegos = set.union(listaJuegos, compruebaJuego(juego))
+                juegos.append(juego)
+                idJuegos.append(re[1])
+                similaridad.append("{:.10f}".format(re[0]))
+            items = zip(juegos, similaridad, idJuegos)
+            return render(request, 'juegos_similares.html', {'idJuego': idJuego, 'nombre_juego':nombre_juego, 'items': items, 'listaJuegos': listaJuegos,  'STATIC_URL': settings.STATIC_URL})
+    
+    return render(request, 'juegos_similares.html', {'form': form})
