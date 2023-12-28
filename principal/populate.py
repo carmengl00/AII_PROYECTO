@@ -59,7 +59,7 @@ def populateDB():
 
 def crear_schema():
     schem = Schema(nombre = TEXT(stored=True), marca = TEXT(stored=True),
-                   precio = NUMERIC(stored=True), descripcion = TEXT(stored=True),
+                   precio = NUMERIC(numtype=float, stored=True), descripcion = TEXT(stored=True),
                    referencia = ID(stored=True), stock = BOOLEAN(stored=True))
 
     if os.path.exists("Index"):

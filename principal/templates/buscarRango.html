@@ -1,20 +1,33 @@
-{%extends 'base.html' %}
+{% extends 'base.html' %}
 
-{%block titulo%} {{titulo}} {%endblock%}
+{% block titulo %} Búsqueda de juegos por precio {% endblock %}
 
-{%block contenido%}
+{% block contenido %}
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    </head>
+
     <form method="post" action=''>{% csrf_token %}
         <fieldset>
-            <legend>Búsqueda de juegos por rango de precio</legend>
+            <legend>Introduce el precio máximo</legend>
             {{form}}
             <BR></BR>
             <input type="submit" value="Buscar">
         </fieldset>
     </form>
 
-    {{mensaje}}
-    {%for juego in results%}
-        <h1>{{juego.nombre}}</h1>
-        <p>{{juego.precio}}</p>
-    {%endfor%}
-{%endblock%}
+    <div class="container">
+        {% if mensaje %}
+            <p class="mt-3">{{ mensaje }}</p>
+        {% endif %}
+
+        {% for juego in results %}
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h4 class="card-title">Título: {{ juego.nombre }}</h4>
+                    <p class="card-text">Precio: {{ juego.precio }}€</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -24,9 +24,10 @@ urlpatterns = [
     path('cargar/', views.cargar),
     path('loadRS/', views.loadRS),
     path('juegos/', views.lista_juegos),
+    path('lista-puntuaciones/', views.lista_puntuaciones),
+    path('juegos-en-stock/', views.buscar_juegos_en_stock),
     path('buscar-precio/', views.buscar_precio_maximo),
     path('buscar-palabra/', views.buscar_nombre_descripcion),
-    path('lista-puntuaciones/', views.lista_puntuaciones),
     path('juegos-similares/', views.juegos_similares),
     path('recomendar-juego-usuario/', views.recomendar_juego_usuario),
 ]

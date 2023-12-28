@@ -33,15 +33,13 @@ def buscar_precio_maximo(request):
         form = BusquedaPorPrecio(request.POST)
         if form.is_valid():
             rango = form.cleaned_data['rango']
-            print("Datos del formulario:", form.cleaned_data)
-            print("Rango: " + str(rango))
             ix = open_dir("Index")
             with ix.searcher() as searcher:
-                rango1 = '[TO ' + str(rango) + '}'
-                query = QueryParser("precio", ix.schema).parse(rango1)
+                rango1 = '[TO ' + str(rango) + ']'
+                query = QueryParser("precio", ix.schema).parse(str(rango1))
                 results = searcher.search(query, limit=None)
                 mensaje = "Se han encontrado: " + str(len(results)) + " resultados con un precio por debajo de " + str(rango)
-                return render(request, 'buscarRango.html', {'results': results, 'mensaje': mensaje})
+                return render(request, 'buscarRango.html', {'results': results, 'mensaje': mensaje, 'STATIC_URL': settings.STATIC_URL})
         else:
             print("Formulario no válido")
     return render(request, 'buscarRango.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
@@ -63,6 +61,14 @@ def buscar_nombre_descripcion(request):
         else:
             print("Formulario error: ", form.errors)
     return render(request, 'buscarPalabra.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
+
+def buscar_juegos_en_stock(request):
+    ix = open_dir("Index")
+    with ix.searcher() as searcher:
+        query = QueryParser("stock", ix.schema).parse("1")
+        juegos = searcher.search(query, limit=None)
+        mensaje = "Se han encontrado: " + str(len(juegos)) + " juegos en stock"
+        return render(request, 'juegos.html', {'juegos': juegos, 'titulo': 'Juegos en Stock', 'STATIC_URL': settings.STATIC_URL})
 
 # Esta funcion comprueba si el juego está en la base de datos
 def compruebaJuego(juego):
@@ -137,11 +143,11 @@ def juegos_similares(request):
                 listaJuegos = set.union(listaJuegos, compruebaJuego(juego))
                 juegos.append(juego)
                 idJuegos.append(re[1])
-                similaridad.append("{:.10f}".format(re[0]))
+                similaridad.append("{:.5f}".format(re[0]))
             items = zip(juegos, similaridad, idJuegos)
             return render(request, 'juegos_similares.html', {'idJuego': idJuego, 'nombre_juego':nombre_juego, 'items': items, 'listaJuegos': listaJuegos,  'STATIC_URL': settings.STATIC_URL})
     
-    return render(request, 'juegos_similares.html', {'form': form})
+    return render(request, 'juegos_similares.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
 
 def recomendar_juego_usuario(request):
     form = BusquedaJuegoPorUsuario()
@@ -163,7 +169,7 @@ def recomendar_juego_usuario(request):
                 juego = juego.juego_nombre
                 juegos_2.append(juego)
                 juegos.append(re[1])
-                puntuaciones.append("{:.10f}".format(re[0]))
+                puntuaciones.append("{:.5f}".format(re[0]))
 
             items = zip(juegos_2, puntuaciones, juegos)
             return render(request, 'recomendar_juego_usuario.html', {'usuario': usuario, 'items': items, 'STATIC_URL': settings.STATIC_URL})
