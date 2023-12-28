@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 import shutil
-from principal.models import Juego
+from principal.models import Juego, Puntuacion
 import urllib.request
 from bs4 import BeautifulSoup
 from whoosh.index import create_in
 from whoosh.fields import Schema, TEXT, BOOLEAN, ID, NUMERIC
+
+path = "dataset"
 
 def populateDB():
     Juego.objects.all().delete()
@@ -75,3 +77,18 @@ def crear_schema():
                             descripcion=juego.descripcion, referencia=juego.referencia, stock = juego.stock)
         i = i + 1
     writer.commit()
+
+
+def populate_puntuaciones():
+    Puntuacion.objects.all().delete()
+    
+    lista=[]
+    fileobj=open(path+"\\bgg-15m-reviews.csv", "r", encoding="utf-8")
+    next(fileobj)
+    for line in fileobj:
+        rip = line.split(",")
+        if len(rip)==6:
+            p=Puntuacion(usuario=rip[1],puntuacion=rip[2],juego_id=rip[4], juego_nombre=rip[5])
+            lista.append(p)
+    fileobj.close()
+    Puntuacion.objects.bulk_create(lista)

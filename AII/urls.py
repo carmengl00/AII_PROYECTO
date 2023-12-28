@@ -23,5 +23,5 @@ urlpatterns = [
     path('', views.inicio),
     path('cargar/', views.cargar),
     path('juegos/', views.lista_juegos),
-    path('buscar-rango/', views.buscar_rango),
+    path('buscar-precio/', views.buscar_precio_maximo),
 ]

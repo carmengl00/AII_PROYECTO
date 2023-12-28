@@ -9,3 +9,8 @@ class Juego(models.Model):
     stock = models.BooleanField(default=True)
     referencia = models.CharField(max_length=20)
 
+class Puntuacion(models.Model):
+    usuario = models.TextField()
+    puntuacion = models.FloatField()
+    juego_id = models.PositiveIntegerField()
+    juego_nombre = models.TextField()
