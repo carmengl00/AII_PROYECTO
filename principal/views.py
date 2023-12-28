@@ -39,10 +39,10 @@ def buscar_precio_maximo(request):
                 query = QueryParser("precio", ix.schema).parse(str(rango1))
                 results = searcher.search(query, limit=None)
                 mensaje = "Se han encontrado: " + str(len(results)) + " resultados con un precio por debajo de " + str(rango)
-                return render(request, 'buscarRango.html', {'results': results, 'mensaje': mensaje, 'STATIC_URL': settings.STATIC_URL})
+                return render(request, 'buscar_por_precio.html', {'results': results, 'mensaje': mensaje, 'STATIC_URL': settings.STATIC_URL})
         else:
             print("Formulario no válido")
-    return render(request, 'buscarRango.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
+    return render(request, 'buscar_por_precio.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
 
 
 def buscar_nombre_descripcion(request):
@@ -57,10 +57,10 @@ def buscar_nombre_descripcion(request):
                 query = MultifieldParser(["nombre", "descripcion"], ix.schema, group=OrGroup).parse(palabra)
                 results = searcher.search(query, limit=None)
                 mensaje = "Se han encontrado: " + str(len(results)) + " resultados con la palabra: " + palabra
-                return render(request, 'buscarPalabra.html', {'results': results, 'mensaje': mensaje, 'STATIC_URL': settings.STATIC_URL})
+                return render(request, 'buscar_palabra.html', {'results': results, 'mensaje': mensaje, 'STATIC_URL': settings.STATIC_URL})
         else:
             print("Formulario error: ", form.errors)
-    return render(request, 'buscarPalabra.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
+    return render(request, 'buscar_palabra.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
 
 def buscar_juegos_en_stock(request):
     ix = open_dir("Index")
@@ -71,7 +71,7 @@ def buscar_juegos_en_stock(request):
         return render(request, 'juegos.html', {'juegos': juegos, 'titulo': 'Juegos en Stock', 'STATIC_URL': settings.STATIC_URL})
 
 # Esta funcion comprueba si el juego está en la base de datos
-def compruebaJuego(juego):
+def comprueba_juego(juego):
     juegos=Juego.objects.all()
     juegonombre = juego.replace("\n", "").replace(" ", "")
     lista=set()
@@ -90,7 +90,7 @@ def lista_puntuaciones(request):
     listajuegos = set()
     for juego in puntuaciones:
         juegonombre = juego.juego_nombre
-        listajuegos = set.union(listajuegos, (compruebaJuego(juegonombre)))
+        listajuegos = set.union(listajuegos, (comprueba_juego(juegonombre)))
     return render(request, 'lista_puntuaciones.html', {'puntuaciones':puntuaciones, 'tamano':tamano, 'listaJuegos':listajuegos, 'STATIC_URL': settings.STATIC_URL})
 
 
@@ -140,7 +140,7 @@ def juegos_similares(request):
                 juego = Puntuacion.objects.filter(juego_id=re[1])[0]
                 juego = juego.juego_nombre
 
-                listaJuegos = set.union(listaJuegos, compruebaJuego(juego))
+                listaJuegos = set.union(listaJuegos, comprueba_juego(juego))
                 juegos.append(juego)
                 idJuegos.append(re[1])
                 similaridad.append("{:.5f}".format(re[0]))
