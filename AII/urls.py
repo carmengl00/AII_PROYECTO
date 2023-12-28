@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.inicio),
     path('cargar/', views.cargar),
+    path('loadRS/', views.loadRS),
     path('juegos/', views.lista_juegos),
     path('buscar-precio/', views.buscar_precio_maximo),
     path('lista-puntuaciones/', views.lista_puntuaciones),

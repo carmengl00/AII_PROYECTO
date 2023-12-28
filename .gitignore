@@ -1,2 +1,5 @@
 dataset/bgg-15m-reviews.csv
 db.sqlite3
+dataRS.dat.bak
+dataRS.dat.dat
+dataRS.dat.dir

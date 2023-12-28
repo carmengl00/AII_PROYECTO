@@ -1,3 +1,4 @@
+import shelve
 from django.conf import settings
 from django.shortcuts import render
 from principal.forms import BusquedaPorPrecio
@@ -6,6 +7,8 @@ from principal.models import Juego, Puntuacion
 from principal.populate import crear_schema, populateDB, populate_puntuaciones
 from whoosh.index import open_dir
 from whoosh.qparser import QueryParser
+
+from principal.recommendations import transformPrefs
 
 
 def inicio(request):
@@ -66,3 +69,21 @@ def lista_puntuaciones(request):
     return render(request, 'lista_puntuaciones.html', {'puntuaciones':puntuaciones, 'tamano':tamano, 'listaJuegos':listajuegos, 'STATIC_URL': settings.STATIC_URL})
 
 
+def loadDict():
+    prefs={}
+    shelf = shelve.open("dataRS.dat")
+    puntuaciones = Puntuacion.objects.all()
+    for puntuacion in puntuaciones:
+        user = str(puntuacion.usuario)
+        juego = int(puntuacion.juego_id)
+        rate = float(puntuacion.puntuacion)
+        prefs.setdefault(user,{})
+        prefs[user][juego] = rate
+    shelf['prefs']=prefs
+    shelf['ItemsPrefs']=transformPrefs(prefs)
+    shelf.close
+
+def loadRS(request):
+    loadDict()
+    mensaje = 'Se ha cargado el RS'
+    return render(request, 'cargar.html', {'titulo': 'FIN DE CARGA DEL RS', 'mensaje': mensaje, 'STATIC_URL': settings.STATIC_URL})
