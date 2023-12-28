@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block titulo %} {{ titulo }} {% endblock %}
+{% block contenido %}
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 mx-auto">
+            <p> Se han cargado {{tamano}} puntuaciones </p>
+            <h4> Lista de juegos que se encuentran en Raccoon: </h4>
+          {% for juego in listaJuegos %}
+            <div class="card mb-3">
+              <div class="card-body">
+                <p class="card-text">{{ juego }}</p>
+              </div>
+            </div>
+          {% endfor %}
+          <h4> Puntuaciones de los usuarios: </h4>
+          {% for puntuacion in puntuaciones %}
+            <div class="card mb-3">
+              <div class="card-body">
+                <p class="card-title">Usuario: {{ puntuacion.usuario }}</p>
+                <p class="card-text">Puntuación: {{ puntuacion.puntuacion }}</p>
+                <p class="card-text">Nombre del juego: {{ puntuacion.juego_nombre }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+{% endblock %}

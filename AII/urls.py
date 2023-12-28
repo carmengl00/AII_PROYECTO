@@ -24,4 +24,5 @@ urlpatterns = [
     path('cargar/', views.cargar),
     path('juegos/', views.lista_juegos),
     path('buscar-precio/', views.buscar_precio_maximo),
+    path('lista-puntuaciones/', views.lista_puntuaciones),
 ]

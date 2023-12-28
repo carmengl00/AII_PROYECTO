@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.shortcuts import render
 from principal.forms import BusquedaPorPrecio
-from principal.models import Juego
+from principal.models import Juego, Puntuacion
 
 from principal.populate import crear_schema, populateDB, populate_puntuaciones
 from whoosh.index import open_dir
@@ -42,5 +42,27 @@ def buscar_precio_maximo(request):
             print("Formulario no válido")
     return render(request, 'buscarRango.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
 
+# Esta funcion comprueba si el juego está en la base de datos
+def compruebaJuego(juego):
+    juegos=Juego.objects.all()
+    juegonombre = juego.replace("\n", "").replace(" ", "")
+    lista=set()
+    for juego in juegos:
+        juegonombre = juego.nombre
+        if juegonombre in juegonombre.replace("\n", "").replace(" ", ""):
+            if juegonombre in lista:
+                continue
+            else:
+                lista.add(juegonombre)
+    return lista
+
+def lista_puntuaciones(request):
+    puntuaciones = Puntuacion.objects.all()[1:100]
+    tamano = Puntuacion.objects.count()
+    listajuegos = set()
+    for juego in puntuaciones:
+        juegonombre = juego.juego_nombre
+        listajuegos = set.union(listajuegos, (compruebaJuego(juegonombre)))
+    return render(request, 'lista_puntuaciones.html', {'puntuaciones':puntuaciones, 'tamano':tamano, 'listaJuegos':listajuegos, 'STATIC_URL': settings.STATIC_URL})
 
 
