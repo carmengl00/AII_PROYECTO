@@ -1,12 +1,12 @@
 import shelve
 from django.conf import settings
 from django.shortcuts import get_object_or_404, render
-from principal.forms import BusquedaJuego, BusquedaPorPrecio
+from principal.forms import BusquedaJuego, BusquedaPorPalabra, BusquedaPorPrecio
 from principal.models import Juego, Puntuacion
 
 from principal.populate import crear_schema, populateDB, populate_puntuaciones
 from whoosh.index import open_dir
-from whoosh.qparser import QueryParser
+from whoosh.qparser import QueryParser, MultifieldParser, OrGroup
 
 from principal.recommendations import topMatches, transformPrefs
 
@@ -37,13 +37,32 @@ def buscar_precio_maximo(request):
             print("Rango: " + str(rango))
             ix = open_dir("Index")
             with ix.searcher() as searcher:
-                query = QueryParser("precio", ix.schema).parse('[TO ' + str(rango) + '}')
+                rango1 = '[TO ' + str(rango) + '}'
+                query = QueryParser("precio", ix.schema).parse(rango1)
                 results = searcher.search(query, limit=None)
                 mensaje = "Se han encontrado: " + str(len(results)) + " resultados con un precio por debajo de " + str(rango)
                 return render(request, 'buscarRango.html', {'results': results, 'mensaje': mensaje})
         else:
             print("Formulario no válido")
     return render(request, 'buscarRango.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
+
+
+def buscar_nombre_descripcion(request):
+    form = BusquedaPorPalabra()
+    if request.method == 'POST':
+        form = BusquedaPorPalabra(request.POST)
+        if form.is_valid():
+            palabra = form.cleaned_data['palabra']
+
+            ix = open_dir("Index")
+            with ix.searcher() as searcher:
+                query = MultifieldParser(["nombre", "descripcion"], ix.schema, group=OrGroup).parse(palabra)
+                results = searcher.search(query, limit=None)
+                mensaje = "Se han encontrado: " + str(len(results)) + " resultados con la palabra: " + palabra
+                return render(request, 'buscarPalabra.html', {'results': results, 'mensaje': mensaje, 'STATIC_URL': settings.STATIC_URL})
+        else:
+            print("Formulario error: ", form.errors)
+    return render(request, 'buscarPalabra.html', {'form': form, 'STATIC_URL': settings.STATIC_URL})
 
 # Esta funcion comprueba si el juego está en la base de datos
 def compruebaJuego(juego):
